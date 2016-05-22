@@ -8,7 +8,7 @@ public class PlayerBehaviour : MonoBehaviour {
 	private Animator animatorPlayer;
 
 	private float currentTimeToAnim;
-	private bool inAnim;
+	private bool inAnim = true;
 	private GameController gameController;
     private bool gameOver = true;
 
@@ -32,9 +32,12 @@ public class PlayerBehaviour : MonoBehaviour {
 			SoundController.PlaySound(soundsGame.wing);
 
 		}
-		else if(Input.GetMouseButtonDown(0) && gameController.GetCurrentState() == GameStates.WAITGAME){
-			Restart();
+		else if(Input.GetMouseButtonDown(0) && gameController.GetCurrentState() == GameStates.TUTORIAL){
+            if (gameController.CanPlay())
+			    Restart();
 		}
+
+        animatorPlayer.SetBool("callFly", inAnim);
 
         Vector3 positionPlayer = transform.position;
 
@@ -42,6 +45,11 @@ public class PlayerBehaviour : MonoBehaviour {
 			positionPlayer.y = 5;
 			transform.position = positionPlayer;
 		}
+
+        if(gameController.GetCurrentState() == GameStates.TUTORIAL)
+        {
+            inAnim = true;
+        }
 
         Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
         if (gameOver && (screenPosition.y > Screen.height || screenPosition.y < 0))
@@ -59,7 +67,7 @@ public class PlayerBehaviour : MonoBehaviour {
 			GetComponent<Rigidbody2D>().gravityScale = 1;
 		}
 
-		if(inAnim){
+		if(inAnim && gameController.GetCurrentState() != GameStates.TUTORIAL){
 			currentTimeToAnim += Time.deltaTime;
 
 			if(currentTimeToAnim > 0.4f){
@@ -68,8 +76,6 @@ public class PlayerBehaviour : MonoBehaviour {
 
 			}
 		}
-
-		animatorPlayer.SetBool("callFly", inAnim);
 
 		if(gameController.GetCurrentState() == GameStates.INGAME){
 

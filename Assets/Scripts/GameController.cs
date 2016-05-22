@@ -5,6 +5,8 @@ public enum GameStates
 {
     START,
     WAITGAME,
+    MAINMENU,
+    TUTORIAL,
     INGAME,
     GAMEOVER,
     RANKING,
@@ -28,7 +30,13 @@ public class GameController : MonoBehaviour
 
     private int score;
 
+    public GameObject mainMenu;
+    public GameObject tutorial;
+
     private GameOverController gameOverController;
+
+    private bool canPlay;
+    private float currentTimeToPlayAgain;
 
     // Use this for initialization
     void Start()
@@ -46,7 +54,33 @@ public class GameController : MonoBehaviour
             case GameStates.START:
                 {
                     player.position = startPositionPlayer;
-                    currentState = GameStates.WAITGAME;
+                    currentState = GameStates.MAINMENU;
+                    mainMenu.SetActive(true);
+                    player.gameObject.SetActive(false);
+
+                }
+                break;
+            case GameStates.MAINMENU:
+                {
+                    player.position = startPositionPlayer;
+
+
+                }
+                break;
+            case GameStates.TUTORIAL:
+                {
+
+                    player.position = startPositionPlayer;
+
+                    currentTimeToPlayAgain += Time.deltaTime;
+
+                    if (currentTimeToPlayAgain > 0.2f)
+                    {
+                        currentTimeToPlayAgain = 0;
+                        canPlay = true;
+                    }
+
+
 
                 }
                 break;
@@ -74,6 +108,9 @@ public class GameController : MonoBehaviour
                         currentState = GameStates.RANKING;
 
                         gameOverController.SetGameOver(score);
+                        canPlay = false;
+
+                        SoundController.PlaySound(soundsGame.menu);
 
                     }
 
@@ -101,6 +138,7 @@ public class GameController : MonoBehaviour
         shadowScore.GetComponent<Renderer>().enabled = true;
         score = 0;
         gameOverController.HideGameOver();
+        tutorial.SetActive(false);
     }
 
     public GameStates GetCurrentState()
@@ -110,10 +148,44 @@ public class GameController : MonoBehaviour
 
     public void CallGameOver()
     {
-        if (currentState != GameStates.GAMEOVER)
+        if (currentState != GameStates.GAMEOVER && currentState != GameStates.RANKING)
+        {
             SoundController.PlaySound(soundsGame.hit);
+            //gameOverController.ShowFade();
+            currentState = GameStates.GAMEOVER;
+        }
 
-        currentState = GameStates.GAMEOVER;
+
+
+    }
+
+    public void CallTutorial()
+    {
+
+
+        currentState = GameStates.TUTORIAL;
+        mainMenu.SetActive(false);
+        tutorial.SetActive(true);
+        player.gameObject.SetActive(true);
+        gameOverController.HideGameOver();
+        ResetGame();
+
+        SoundController.PlaySound(soundsGame.menu);
+
+
+    }
+
+    public void CallMainMenu()
+    {
+
+
+        currentState = GameStates.MAINMENU;
+        mainMenu.SetActive(true);
+        player.gameObject.SetActive(false);
+        gameOverController.HideGameOver();
+        ResetGame();
+
+        SoundController.PlaySound(soundsGame.menu);
 
 
     }
@@ -132,13 +204,17 @@ public class GameController : MonoBehaviour
         shadowScore.GetComponent<Renderer>().enabled = false;
         numberScore.text = score.ToString();
         shadowScore.text = score.ToString();
-        player.position = startPositionPlayer;
     }
 
     public void AddScore()
     {
         score++;
         SoundController.PlaySound(soundsGame.point);
+    }
+
+    public bool CanPlay()
+    {
+        return canPlay;
     }
 
 }
