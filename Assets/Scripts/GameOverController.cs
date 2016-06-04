@@ -38,7 +38,7 @@ public class GameOverController : MonoBehaviour {
 			newScore.SetActive(true);
 		}
 		else{
-			//newScore.SetActive(false);
+			newScore.SetActive(false);
 		}
 
 		score.text = scoreInGame.ToString();

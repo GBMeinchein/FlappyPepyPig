@@ -16,23 +16,25 @@ public class PlayerBehaviour : MonoBehaviour {
 	void Start () {
 		animatorPlayer = mesh.GetComponent<Animator>();
 		gameController = FindObjectOfType(typeof(GameController)) as GameController;
+        gameOver = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        
 
-		if(Input.GetMouseButtonDown(0) && gameController.GetCurrentState() == GameStates.INGAME && 
+        if (Input.GetMouseButtonDown(0) && gameController.GetCurrentState() == GameStates.INGAME && 
 		   gameController.GetCurrentState() != GameStates.GAMEOVER){
-            gameOver = true;
             inAnim = true;
 
 			GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 			GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 1)*forceFly);
 
 			SoundController.PlaySound(soundsGame.wing);
-
-		}
+            //gameOver = true;
+        }
 		else if(Input.GetMouseButtonDown(0) && gameController.GetCurrentState() == GameStates.TUTORIAL){
+            //gameOver = true;
             if (gameController.CanPlay())
 			    Restart();
 		}
@@ -51,12 +53,13 @@ public class PlayerBehaviour : MonoBehaviour {
             inAnim = true;
         }
 
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
-        if (gameOver && (screenPosition.y > Screen.height || screenPosition.y < 0))
-        {
-            gameOver = false;
-            gameController.CallGameOver();
-        }
+        //Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+        //if (gameOver && (screenPosition.y > Screen.height || screenPosition.y < 0))
+        //{
+        //    gameOver = false;
+        //    gameController.CallGameOver();
+        //    //return;
+        //}
 
         if (gameController.GetCurrentState() != GameStates.INGAME && 
 		   gameController.GetCurrentState() != GameStates.GAMEOVER){

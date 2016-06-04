@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour
 
     public GameObject mainMenu;
     public GameObject tutorial;
-
+    public GameObject imagemScore;
     private GameOverController gameOverController;
 
     private bool canPlay;
@@ -139,6 +139,7 @@ public class GameController : MonoBehaviour
         score = 0;
         gameOverController.HideGameOver();
         tutorial.SetActive(false);
+        imagemScore.SetActive(true);
     }
 
     public GameStates GetCurrentState()
